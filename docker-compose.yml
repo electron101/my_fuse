@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  memfs-test:
+    build: .
+    container_name: memfs-test-container
+    cap_add:
+      - SYS_ADMIN               # Разрешает доступ к системным администрированию (необходим для работы с FUSE)
+    devices:
+      - /dev/fuse               # Доступ к устройству FUSE
+    # volumes:
+    #   - /mnt/memfs_mount_point  # Монтируем точку для файловой системы FUSE
+    # environment:
+    #   - MOUNT_POINT=/mnt/memfs_mount_point
+    #   - FS_PATH=/usr/src/memfs/memfs
+    command: pytest /tests/test_vfs.py -s # Запуск тестов после старта контейнера
+    stdin_open: true             # Открыть терминал для интерактивной работы
+    tty: true                    # Чтобы контейнер не закрывался сразу
+    networks:
+      - memfs_network
+
+networks:
+  memfs_network:
+    driver: bridge
+
